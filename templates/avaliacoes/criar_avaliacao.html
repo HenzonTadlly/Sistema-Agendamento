@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}Avaliar Atendimento{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Avaliar Atendimento</h1>
+    <p class="subtitle">
+        Registre sua experiência com o atendimento realizado.
+    </p>
+
+    <div class="avaliacao-layout">
+        <div class="card avaliacao-info-card">
+            <h2 class="form-title">Resumo do atendimento</h2>
+
+            <div class="info-list">
+                <p><strong>Serviço:</strong> {{ agendamento.servico.nome }}</p>
+                <p><strong>Prestador:</strong> {{ agendamento.prestador.username }}</p>
+                <p><strong>Data:</strong> {{ agendamento.data }}</p>
+                <p><strong>Horário:</strong> {{ agendamento.horario }}</p>
+                <p>
+                    <strong>Status:</strong>
+                    <span class="tag {{ agendamento.status }}">{{ agendamento.status }}</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="card avaliacao-form-card">
+            <h2 class="form-title">Sua avaliação</h2>
+            <p class="form-subtitle">
+                Dê uma nota de 1 a 5 e, se quiser, escreva um comentário sobre o atendimento.
+            </p>
+
+            <form method="post" class="styled-form">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="{{ form.nota.id_for_label }}">Nota</label>
+                    {{ form.nota }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.comentario.id_for_label }}">Comentário</label>
+                    {{ form.comentario }}
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="form-errors">
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="form-actions">
+                    <button type="submit">Enviar avaliação</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        .avaliacao-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .avaliacao-info-card,
+        .avaliacao-form-card {
+            width: 100%;
+        }
+
+        .form-title {
+            margin: 0 0 8px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .form-subtitle {
+            margin: 0 0 24px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .info-list p {
+            margin: 12px 0;
+            color: #dbe2ea;
+            line-height: 1.5;
+        }
+
+        .styled-form {
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .form-errors {
+            margin-top: 10px;
+            margin-bottom: 18px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #fca5a5;
+        }
+
+        .form-errors p {
+            margin: 0;
+        }
+
+        .form-actions {
+            margin-top: 8px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        @media (max-width: 900px) {
+            .avaliacao-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Login</h1>
+    <p class="subtitle">Entre na sua conta para acessar o sistema.</p>
+
+    <div class="card">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Entrar</button>
+        </form>
+
+        <div style="margin-top: 18px;">
+            <p class="subtitle" style="margin-bottom: 10px;">Ainda não tem conta?</p>
+            <a class="action-link" href="{% url 'cadastro' %}">Criar conta</a>
+        </div>
+    </div>
+{% endblock %}

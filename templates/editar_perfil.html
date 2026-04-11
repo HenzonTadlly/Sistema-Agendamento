@@ -1,0 +1,304 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Perfil{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Editar Perfil</h1>
+    <p class="subtitle">Atualize sua foto, seus dados pessoais e sua biografia.</p>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="editar-perfil-layout">
+            <div class="editar-perfil-card editar-perfil-preview">
+                <div class="editar-foto-wrapper">
+                    {% if user.perfil.foto %}
+                        <img
+                            src="{{ user.perfil.foto.url }}"
+                            alt="Foto de perfil"
+                            class="editar-foto-perfil"
+                            id="preview-foto"
+                        >
+                        <div
+                            class="editar-foto-placeholder"
+                            id="preview-placeholder"
+                            style="display: none;"
+                        >
+                            {{ user.username|slice:":1"|upper }}
+                        </div>
+                    {% else %}
+                        <img
+                            src=""
+                            alt="Preview da foto"
+                            class="editar-foto-perfil"
+                            id="preview-foto"
+                            style="display: none;"
+                        >
+                        <div class="editar-foto-placeholder" id="preview-placeholder">
+                            {{ user.username|slice:":1"|upper }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <h2 class="editar-perfil-nome">{{ user.username }}</h2>
+                <p class="editar-perfil-tipo">{{ user.perfil.tipo_usuario|title }}</p>
+
+                <div class="editar-foto-actions">
+                    <label for="id_foto" class="editar-file-button">Alterar foto</label>
+                    {{ form.foto }}
+                </div>
+
+                <p class="editar-foto-help">
+                    Escolha uma imagem para visualizar antes de salvar.
+                </p>
+            </div>
+
+            <div class="editar-perfil-content">
+                <div class="editar-perfil-card">
+                    <h2 class="editar-card-title">Dados pessoais</h2>
+
+                    <div class="editar-form-group">
+                        <label for="{{ form.telefone.id_for_label }}">Telefone</label>
+                        {{ form.telefone }}
+                    </div>
+
+                    {% if user.perfil.tipo_usuario == 'prestador' %}
+                        <div class="editar-form-group">
+                            <label>Serviços oferecidos</label>
+                            <div class="editar-servicos-box">
+                                {{ form.servicos_oferecidos }}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <button type="submit">Salvar alterações</button>
+                </div>
+
+                <div class="editar-perfil-card">
+                    <h2 class="editar-card-title">Bio</h2>
+
+                    <div class="editar-form-group">
+                        <label for="{{ form.descricao.id_for_label }}">Descrição</label>
+                        {{ form.descricao }}
+                    </div>
+
+                    <div class="editar-bio-preview">
+                        <strong>Prévia atual:</strong>
+                        <p>
+                            {% if user.perfil.descricao %}
+                                {{ user.perfil.descricao }}
+                            {% else %}
+                                Nenhuma descrição cadastrada ainda.
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <style>
+        .editar-perfil-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .editar-perfil-card {
+            background: rgba(20, 28, 39, 0.88);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 22px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+            backdrop-filter: blur(10px);
+        }
+
+        .editar-perfil-preview {
+            text-align: center;
+            position: sticky;
+            top: 110px;
+        }
+
+        .editar-perfil-content {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .editar-foto-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+
+        .editar-foto-perfil,
+        .editar-foto-placeholder {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+        }
+
+        .editar-foto-perfil {
+            object-fit: cover;
+            border: 4px solid rgba(255,255,255,0.08);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.30);
+            display: block;
+        }
+
+        .editar-foto-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #00d084, #00a86b);
+            color: #04130c;
+            font-size: 42px;
+            font-weight: 800;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.30);
+        }
+
+        .editar-perfil-nome {
+            margin: 0 0 8px;
+            font-size: 24px;
+        }
+
+        .editar-perfil-tipo {
+            margin: 0 0 18px;
+            color: #00d084;
+            font-weight: 700;
+        }
+
+        .editar-foto-actions {
+            margin-top: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .editar-file-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 18px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #00d084, #00a86b);
+            color: #04130c;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 208, 132, 0.18);
+            transition: 0.25s ease;
+        }
+
+        .editar-file-button:hover {
+            opacity: 0.96;
+            transform: translateY(-1px);
+        }
+
+        #id_foto {
+            display: none;
+        }
+
+        .editar-foto-help {
+            margin-top: 4px;
+            color: #9aa4b2;
+            font-size: 13px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .editar-card-title {
+            margin: 0 0 18px;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .editar-form-group {
+            margin-bottom: 18px;
+        }
+
+        .editar-form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #f5f7fb;
+        }
+
+        .editar-servicos-box ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .editar-servicos-box li {
+            margin-bottom: 10px;
+            color: #dbe2ea;
+        }
+
+        .editar-servicos-box label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .editar-servicos-box input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .editar-bio-preview {
+            margin-top: 18px;
+            padding: 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+        }
+
+        .editar-bio-preview p {
+            margin: 10px 0 0;
+            color: #dbe2ea;
+            line-height: 1.6;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        @media (max-width: 900px) {
+            .editar-perfil-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .editar-perfil-preview {
+                position: static;
+            }
+        }
+    </style>
+
+    <script>
+        const inputFoto = document.getElementById('id_foto');
+        const previewFoto = document.getElementById('preview-foto');
+        const previewPlaceholder = document.getElementById('preview-placeholder');
+
+        if (inputFoto) {
+            inputFoto.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+
+                if (file) {
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        previewFoto.src = e.target.result;
+                        previewFoto.style.display = 'block';
+
+                        if (previewPlaceholder) {
+                            previewPlaceholder.style.display = 'none';
+                        }
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    </script>
+{% endblock %}

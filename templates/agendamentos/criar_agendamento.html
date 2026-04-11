@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}Novo Agendamento{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Novo Agendamento</h1>
+    <p class="subtitle">
+        Escolha o serviço, selecione um prestador disponível e defina a melhor data e horário.
+    </p>
+
+    <div class="agendamento-page">
+        <div class="card agendamento-card">
+            <h2 class="form-title">Informações do agendamento</h2>
+            <p class="form-subtitle">
+                Preencha os dados abaixo para solicitar um novo atendimento.
+            </p>
+
+            <form method="post" class="styled-form">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="{{ form.servico.id_for_label }}">Serviço</label>
+                    {{ form.servico }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.prestador.id_for_label }}">Prestador</label>
+                    {{ form.prestador }}
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.data.id_for_label }}">Data</label>
+                        {{ form.data }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.horario.id_for_label }}">Horário</label>
+                        {{ form.horario }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.observacao.id_for_label }}">Observação</label>
+                    {{ form.observacao }}
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="form-errors">
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="form-actions">
+                    <button type="submit">Criar agendamento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        .agendamento-page {
+            display: flex;
+            justify-content: center;
+        }
+
+        .agendamento-card {
+            width: 100%;
+            max-width: 760px;
+        }
+
+        .form-title {
+            margin: 0 0 8px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .form-subtitle {
+            margin: 0 0 24px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .styled-form {
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .form-errors {
+            margin-top: 10px;
+            margin-bottom: 18px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #fca5a5;
+        }
+
+        .form-errors p {
+            margin: 0;
+        }
+
+        .form-actions {
+            margin-top: 8px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+{% endblock %}

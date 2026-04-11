@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Cadastro{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Cadastro</h1>
+    <p class="subtitle">Crie sua conta como cliente ou prestador.</p>
+
+    <div class="card">
+        <form method="post">
+            {% csrf_token %}
+
+            {{ form.username.label }}<br>
+            {{ form.username }}<br>
+
+            {{ form.email.label }}<br>
+            {{ form.email }}<br>
+
+            {{ form.password1.label }}<br>
+            {{ form.password1 }}<br>
+
+            {{ form.password2.label }}<br>
+            {{ form.password2 }}<br>
+
+            <label>Tipo de usuário:</label><br>
+            {{ form.tipo_usuario }}<br>
+
+            <button type="submit">Cadastrar</button>
+        </form>
+    </div>
+{% endblock %}

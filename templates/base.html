@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Sistema{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0b0f14;
+            --bg-secondary: #121821;
+            --card: rgba(20, 28, 39, 0.88);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text: #f5f7fb;
+            --muted: #9aa4b2;
+            --accent: #00d084;
+            --accent-dark: #00a86b;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+            --pending-bg: rgba(255, 193, 7, 0.15);
+            --pending-text: #ffd666;
+            --confirm-bg: rgba(59, 130, 246, 0.15);
+            --confirm-text: #93c5fd;
+            --done-bg: rgba(34, 197, 94, 0.15);
+            --done-text: #86efac;
+            --cancel-bg: rgba(239, 68, 68, 0.15);
+            --cancel-text: #fca5a5;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(0, 208, 132, 0.12), transparent 28%),
+                radial-gradient(circle at top right, rgba(59, 130, 246, 0.10), transparent 30%),
+                linear-gradient(180deg, #0b0f14 0%, #101722 100%);
+            min-height: 100vh;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(14px);
+            background: rgba(11, 15, 20, 0.78);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .nav-wrapper {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 18px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--text);
+        }
+
+        .brand-badge {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #4ade80);
+            box-shadow: 0 0 18px rgba(0, 208, 132, 0.55);
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        nav a,
+        nav span {
+            font-size: 14px;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            padding: 10px 14px;
+            border-radius: 12px;
+            transition: 0.25s ease;
+        }
+
+        nav a:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--accent);
+        }
+
+        .nav-user {
+            color: var(--muted);
+            padding: 6px 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 999px;
+        }
+
+        .nav-highlight {
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: #04130c !important;
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(0, 208, 132, 0.18);
+        }
+
+        .nav-highlight:hover {
+            opacity: 0.92;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: #04130c !important;
+        }
+
+        .nav-avatar {
+            width: 38px;
+            height: 38px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.12);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        }
+
+        .nav-avatar-placeholder {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: #04130c;
+            font-weight: 800;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1250px;
+            margin: 34px auto;
+            padding: 0 24px 40px;
+        }
+
+        .messages-wrapper {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 14px 16px;
+            border-radius: 14px;
+            margin-bottom: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .alert.success {
+            background: rgba(34, 197, 94, 0.12);
+            color: #86efac;
+        }
+
+        .alert.error {
+            background: rgba(239, 68, 68, 0.12);
+            color: #fca5a5;
+        }
+
+        .alert.warning {
+            background: rgba(245, 158, 11, 0.12);
+            color: #fcd34d;
+        }
+
+        .alert.info {
+            background: rgba(59, 130, 246, 0.12);
+            color: #93c5fd;
+        }
+
+        .page-title {
+            margin: 0 0 10px;
+            font-size: 38px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            margin: 0 0 28px;
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .section {
+            margin-top: 34px;
+        }
+
+        .section h2 {
+            margin: 0 0 18px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .card {
+            position: relative;
+            overflow: hidden;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 22px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        .card h3 {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .card .number {
+            margin-top: 14px;
+            font-size: 34px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--text);
+        }
+
+        .card .mini-info {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .list-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        .list-card p {
+            margin: 8px 0;
+            color: #dbe2ea;
+            line-height: 1.5;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 7px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: capitalize;
+            letter-spacing: 0.02em;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .tag.pendente {
+            background: var(--pending-bg);
+            color: var(--pending-text);
+        }
+
+        .tag.confirmado {
+            background: var(--confirm-bg);
+            color: var(--confirm-text);
+        }
+
+        .tag.concluido {
+            background: var(--done-bg);
+            color: var(--done-text);
+        }
+
+        .tag.cancelado {
+            background: var(--cancel-bg);
+            color: var(--cancel-text);
+        }
+
+        .actions {
+            margin-top: 14px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .actions form {
+            margin: 0;
+        }
+
+        .actions button {
+            padding: 10px 14px;
+        }
+
+        .action-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.25s ease;
+        }
+
+        .action-link:hover {
+            background: rgba(0, 208, 132, 0.12);
+            color: var(--accent);
+        }
+
+        .empty-message {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed rgba(255, 255, 255, 0.12);
+            border-radius: 18px;
+            padding: 22px;
+            color: var(--muted);
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: #04130c;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(0, 208, 132, 0.18);
+            transition: 0.25s ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            opacity: 0.96;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            max-width: 520px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.03);
+            color: #ffffff;
+            margin-top: 6px;
+            margin-bottom: 14px;
+            outline: none;
+        }
+
+        select {
+            background-color: #161d27;
+            color: #ffffff;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        select option {
+            background-color: #161d27;
+            color: #ffffff;
+        }
+
+        textarea {
+            resize: none;
+            min-height: 120px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: rgba(0, 208, 132, 0.55);
+            box-shadow: 0 0 0 4px rgba(0, 208, 132, 0.10);
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+            margin: 34px 0;
+        }
+
+        @media (max-width: 768px) {
+            .nav-wrapper {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .page-title {
+                font-size: 30px;
+            }
+
+            .container {
+                margin-top: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="nav-wrapper">
+            <div class="brand">
+                <span class="brand-badge"></span>
+                <span>Sistema de Agendamento</span>
+            </div>
+
+            <nav>
+                <a href="/">Home</a>
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}">Dashboard</a>
+                    <a class="nav-highlight" href="{% url 'criar_agendamento' %}">Novo Agendamento</a>
+                    <a href="{% url 'editar_perfil' %}">Perfil</a>
+
+                    <span class="nav-user">
+                        {% if user.perfil.foto %}
+                            <img class="nav-avatar" src="{{ user.perfil.foto.url }}" alt="Foto de perfil">
+                        {% else %}
+                            <span class="nav-avatar-placeholder">
+                                {{ user.username|slice:":1"|upper }}
+                            </span>
+                        {% endif %}
+                        Olá, {{ user.username }}
+                    </span>
+
+                    <a href="/logout/">Sair</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Login</a>
+                    <a class="nav-highlight" href="{% url 'cadastro' %}">Cadastro</a>
+                {% endif %}
+
+                <a href="/admin/">Admin</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        {% if messages %}
+            <div class="messages-wrapper">
+                {% for message in messages %}
+                    <div class="alert {{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

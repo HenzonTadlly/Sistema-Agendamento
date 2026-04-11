@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Dashboard</h1>
+    <p class="subtitle">
+        Bem-vindo, <strong>{{ user.username }}</strong>.
+    </p>
+
+    {% if tipo_usuario == 'cliente' %}
+        <div class="section">
+            <h2>Meus agendamentos</h2>
+            <div class="grid-cards">
+                <div class="card">
+                    <h3>Total de agendamentos</h3>
+                    <div class="number">{{ total_cliente }}</div>
+                    <div class="mini-info">Todos os agendamentos feitos por você.</div>
+                </div>
+
+                <div class="card">
+                    <h3>Pendentes</h3>
+                    <div class="number">{{ pendentes_cliente }}</div>
+                </div>
+
+                <div class="card">
+                    <h3>Confirmados</h3>
+                    <div class="number">{{ confirmados_cliente }}</div>
+                </div>
+
+                <div class="card">
+                    <h3>Concluídos</h3>
+                    <div class="number">{{ concluidos_cliente }}</div>
+                </div>
+
+                <div class="card">
+                    <h3>Cancelados</h3>
+                    <div class="number">{{ cancelados_cliente }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section">
+            <h2>Meus agendamentos como cliente</h2>
+
+            {% if agendamentos_cliente %}
+                {% for agendamento in agendamentos_cliente %}
+                    <div class="list-card">
+                        <p><strong>Serviço:</strong> {{ agendamento.servico.nome }}</p>
+                        <p><strong>Prestador:</strong> {{ agendamento.prestador.username }}</p>
+                        <p><strong>Data:</strong> {{ agendamento.data }}</p>
+                        <p><strong>Horário:</strong> {{ agendamento.horario }}</p>
+                        <p>
+                            <strong>Status:</strong>
+                            <span class="tag {{ agendamento.status }}">{{ agendamento.status }}</span>
+                        </p>
+
+                        <div class="actions">
+                            {% if agendamento.status == 'pendente' or agendamento.status == 'confirmado' %}
+                                <form method="post" action="{% url 'atualizar_status_rapido' agendamento.id 'cancelado' %}">
+                                    {% csrf_token %}
+                                    <button type="submit">Cancelar</button>
+                                </form>
+                            {% endif %}
+
+                            {% if agendamento.status == 'concluido' %}
+                                {% if agendamento.id not in agendamentos_avaliados_ids %}
+                                    <a class="action-link" href="{% url 'criar_avaliacao' agendamento.id %}">
+                                        Avaliar atendimento
+                                    </a>
+                                {% else %}
+                                    <span class="action-link" style="opacity: 0.7; pointer-events: none;">
+                                        Atendimento já avaliado
+                                    </span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-message">
+                    Você ainda não possui agendamentos como cliente.
+                </div>
+            {% endif %}
+        </div>
+
+    {% elif tipo_usuario == 'prestador' %}
+        <div class="section">
+            <h2>Métricas como prestador</h2>
+            <div class="grid-cards">
+                <div class="card">
+                    <h3>Total de atendimentos</h3>
+                    <div class="number">{{ total_prestador }}</div>
+                </div>
+
+                <div class="card">
+                    <h3>Pendentes</h3>
+                    <div class="number">{{ pendentes_prestador }}</div>
+                </div>
+
+                <div class="card">
+                    <h3>Confirmados</h3>
+                    <div class="number">{{ confirmados_prestador }}</div>
+                </div>
+
+                <div class="card">
+                    <h3>Concluídos</h3>
+                    <div class="number">{{ concluidos_prestador }}</div>
+                </div>
+
+                <div class="card">
+                    <h3>Cancelados</h3>
+                    <div class="number">{{ cancelados_prestador }}</div>
+                </div>
+
+                <div class="card">
+                    <h3>Total de avaliações</h3>
+                    <div class="number">{{ total_avaliacoes_prestador }}</div>
+                </div>
+
+                <div class="card">
+                    <h3>Média das avaliações</h3>
+                    <div class="number">
+                        {% if media_avaliacoes_prestador %}
+                            {{ media_avaliacoes_prestador|floatformat:1 }}
+                        {% else %}
+                            0.0
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section">
+            <h2>Meus agendamentos como prestador</h2>
+
+            {% if agendamentos_prestador %}
+                {% for agendamento in agendamentos_prestador %}
+                    <div class="list-card">
+                        <p><strong>Serviço:</strong> {{ agendamento.servico.nome }}</p>
+                        <p><strong>Cliente:</strong> {{ agendamento.cliente.username }}</p>
+                        <p><strong>Data:</strong> {{ agendamento.data }}</p>
+                        <p><strong>Horário:</strong> {{ agendamento.horario }}</p>
+                        <p>
+                            <strong>Status:</strong>
+                            <span class="tag {{ agendamento.status }}">{{ agendamento.status }}</span>
+                        </p>
+
+                        <div class="actions">
+                            {% if agendamento.status == 'pendente' %}
+                                <form method="post" action="{% url 'atualizar_status_rapido' agendamento.id 'confirmado' %}">
+                                    {% csrf_token %}
+                                    <button type="submit">Confirmar</button>
+                                </form>
+                            {% endif %}
+
+                            {% if agendamento.status == 'confirmado' %}
+                                <form method="post" action="{% url 'atualizar_status_rapido' agendamento.id 'concluido' %}">
+                                    {% csrf_token %}
+                                    <button type="submit">Concluir</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-message">
+                    Você ainda não possui agendamentos como prestador.
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section">
+            <h2>Últimas avaliações recebidas</h2>
+
+            {% if ultimas_avaliacoes %}
+                {% for avaliacao in ultimas_avaliacoes %}
+                    <div class="list-card">
+                        <p><strong>Cliente:</strong> {{ avaliacao.agendamento.cliente.username }}</p>
+                        <p><strong>Nota:</strong> {{ avaliacao.nota }}/5</p>
+                        <p>
+                            <strong>Comentário:</strong>
+                            {% if avaliacao.comentario %}
+                                {{ avaliacao.comentario }}
+                            {% else %}
+                                Sem comentário.
+                            {% endif %}
+                        </p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-message">
+                    Você ainda não recebeu avaliações.
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Alterar Status{% endblock %}
+
+{% block content %}
+    <h1>Alterar Status do Agendamento</h1>
+
+    <p><strong>Cliente:</strong> {{ agendamento.cliente.username }}</p>
+    <p><strong>Prestador:</strong> {{ agendamento.prestador.username }}</p>
+    <p><strong>Serviço:</strong> {{ agendamento.servico.nome }}</p>
+    <p><strong>Data:</strong> {{ agendamento.data }}</p>
+    <p><strong>Horário:</strong> {{ agendamento.horario }}</p>
+    <p><strong>Status atual:</strong> {{ agendamento.status }}</p>
+
+    {% if form.fields.status.choices %}
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Salvar Status</button>
+        </form>
+    {% else %}
+        <p>Não há alterações disponíveis para este agendamento.</p>
+    {% endif %}
+{% endblock %}
